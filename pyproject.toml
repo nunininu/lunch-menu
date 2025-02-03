@@ -1,0 +1,27 @@
+[project]
+name = "lunch-menu"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "nunininu", email = "sgcho0907@gmail.com"},
+]
+dependencies = ["pandas>=2.2.3"]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
+
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+]
+eda = [
+    "jupyterlab>=4.3.5",
+]
