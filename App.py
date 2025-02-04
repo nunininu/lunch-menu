@@ -125,6 +125,12 @@ if isPress:
     melted_df = df.melt(id_vars=['ename'], value_vars=df.columns[start_idx:-2], var_name='dt', value_name='menu')
 
     not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
+    gdf = not_na_df.groupby('ename')['menu'].count().reset_index()
+
+    # Matplotlib로 바 차트 그리기
+    fig, ax = plt.subplots()
+    gdf.plot(x="ename", y="menu", kind="bar", ax=ax)
+    st.pyplot(fig)
 
     row = []
     for i in not_na_df.index:
