@@ -77,7 +77,18 @@ fig, ax = plt.subplots()
 gdf.plot(x="ename", y="menu", kind="bar", ax=ax)
 st.pyplot(fig)
 
-# st.write("""
+
+
+st.subheader("확인")
+
+
+conn = get_connection()
+cursor = conn.cursor()
+cursor.execute(query)
+rows = cursor.fetchall()
+# conn.commit()
+cursor.close()
+
 # 점심메뉴 집계
 #  **lunch menu**
 
@@ -99,3 +110,40 @@ st.pyplot(fig)
 # fig, ax = plt.subplots()
 # gdf.plot(x="ename", y="menu", kind="bar", ax=ax)
 # st.pyplot(fig)
+
+
+# CSV 로드해서 한번에 다 디비에 INSERT 하는거
+st.subheader("벌크 인서트")
+st.button("한방에 인서트")
+not_na_df = pd.DataFrame()
+
+if isPress:
+    conn = get_connection()
+    cursor = conn.cursor()
+    df = pd.read_csv('note/lunch_menu.csv')
+    start_idx = df.columns.get_loc('2025-01-07')
+    melted_df = df.melt(id_vars=['ename'], value_vars=df.columns[start_idx:-2], var_name='dt', value_name='menu')
+
+    not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
+
+    row = []
+    for i in not_na_df.index:
+        value = not_na_df.loc[i, "menu"]
+        ename = not_na_df.loc[i, "ename"]
+        dt = not_na_df.loc[i, "dt"]
+        row.append((value,ename,dt))
+
+    st.write(row)
+
+
+    cursor.executemany("INSERT INTO lunch_menu (menu_name,member_name,dt) VALUES (%s,%s,%s)", row)
+    conn.commit()
+    cursor.close()
+    st.success(f"벌크 인서트 완료")
+
+
+
+
+
+
+
