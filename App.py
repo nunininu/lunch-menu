@@ -3,13 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 st.write("""
-# My first app
-Hello **world!**
+# 점심메뉴 집계
+ **lunch menu**
 
-![img](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMDmITYUL3-dQiE99pPRG-f1gLO76Wh_UjEXTSvx0RiNdbvu_d4-L5OR43qlce8eNfeHld83WgawlwjNkQvWM7cA)
+![img](https://static.wikia.nocookie.net/pokemon/images/a/aa/%EA%BC%AC%EB%B6%80%EA%B8%B0_%EA%B3%B5%EC%8B%9D_%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8.png/revision/latest?cb=20170404233452&path-prefix=ko)
 """)
 
-df = pd.read_csv('note/menu.csv')
+df = pd.read_csv('note/lunch_menu.csv')
 
 start_idx = df.columns.get_loc('2025-01-07')
 melted_df = df.melt(id_vars=['ename'], value_vars=df.columns[start_idx:-2], 
