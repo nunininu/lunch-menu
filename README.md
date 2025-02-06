@@ -53,7 +53,45 @@ values
 select * from member;
 
 select jsonb_object_agg(name, id)
-from member;
+from ( 
+	select name, id from member order by id
+) temp;
+
+--새로운 컬럼 추가
+alter table lunch_menu 
+add column member_id int;
+
+select * from lunch_menu limit 1;
+
+--기존의 제약조건을 삭제
+alter table lunch_menu
+drop constraint unique_member_dt;
+
+-- 사용하지 않는 컬럼 삭제
+alter table lunch_menu
+drop column member_name;
+
+--member_id null 값을 허용하지 않도록 설정
+--delete from lunch_menu
+alter table lunch_menu
+alter column member_id set not null;
+
+select * from lunch_menu;
+
+-- 새로운 제약조건 추가
+alter table lunch_menu
+add constraint unique_memberid_dt unique(member_id, dt);
+
+-- 멤버 테이블에 기본키를 설정: 기본 키가 있어야 참조키를 설정할 수 있다고 함
+alter table member
+add constraint member_id_pk primary key(id);
+
+-- 관계 조건 추가
+alter table lunch_menu
+add constraint menu_member_fk 
+	foreign key (member_id)
+	references member(id)
+
 ```
 
 ## Dev

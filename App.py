@@ -5,6 +5,8 @@ import psycopg
 import os
 from dotenv import load_dotenv
 
+members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
+
 # https://docs.streamlit.io/develop/concepts/connections/secrets-management
 load_dotenv()
 db_name = os.getenv("DB_NAME")
@@ -19,13 +21,13 @@ DB_CONFIG = {
 def get_connection():
     return psycopg.connect(**DB_CONFIG)
 
-def insert_menu(menu_name, member_name, dt):
+def insert_menu(menu_name, member_id, dt):
     try:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
-            (menu_name, member_name, dt)
+            "INSERT INTO lunch_menu (menu_name, member_id, dt) VALUES (%s, %s, %s);",
+            (menu_name, member_id, dt)
             )
         conn.commit()
         cursor.close()
@@ -36,21 +38,24 @@ def insert_menu(menu_name, member_name, dt):
         return False 
 
 
-st.title(f"점심메뉴집계{db_name}")
+st.title(f"점심메뉴집계 {db_name}")
 
 st.subheader("입력")
-menu_name = st.text_input("메뉴 이름", placeholder="예: 김치개찌")
+menu_name = st.text_input("메뉴 이름", placeholder="예: 김치찌개")
 member_name = st.selectbox(
     "먹은 사람",
-    ("TOM", "KIM", "LEE"),
+    options=list(members.keys()),
+    index=list(members.keys()).index('nuni')
 )
-dt = st.date_input(" 날짜")
-먹은
+member_id = members[member_name]
+
+dt = st.date_input("먹은 날짜")
+
 isPress = st.button("메뉴 저장")
 
 if isPress:
-    if menu_name and member_name and dt:
-        if insert_menu(menu_name, member_name, dt):
+    if menu_name and member_id and dt:
+        if insert_menu(menu_name, member_id, dt):
             st.success(f"입력성공")
         else:
             st.error(f"입력실패")
@@ -104,10 +109,3 @@ if st.button("한방에 인서트"):
     melted_df = df.melt(id_vars=['ename'], value_vars=df.columns[start_idx:-2], 
                      var_name='dt', value_name='menu')
     
-    not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
-
-    for _, row in not_na_df.iterrows():
-        insert_menu(row['menu'], row['ename'], row['dt'])
-
-    st.success(f"벌크인서트 성공")
-
