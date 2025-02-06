@@ -1,11 +1,11 @@
 [project]
 name = "lunch-menu"
-version = "0.3.0"
+version = "0.1.0"
 description = "Default template for PDM package"
 authors = [
-    {name = "ppabam", email = "tom@diginori.com"},
+    {name = "nunininu", email = "sgcho0907@gmail.com"},
 ]
-dependencies = ["pandas>=2.2.3", "matplotlib>=3.10.0", "psycopg[binary,pool]>=3.2.4", "streamlit>=1.41.1", "python-dotenv>=1.0.1"]
+dependencies = ["pandas>=2.2.3", "streamlit>=1.41.1", "matplotlib>=3.10.0", "psycopg[binary,pool]>=3.2.4"]
 requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}
@@ -19,9 +19,9 @@ build-backend = "pdm.backend"
 distribution = true
 
 [dependency-groups]
-eda = [
-    "jupyterlab>=4.3.4",
-]
 test = [
     "pytest>=8.3.4",
+]
+eda = [
+    "jupyterlab>=4.3.5",
 ]
