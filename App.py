@@ -49,18 +49,75 @@ member_name = st.selectbox(
 )
 member_id = members[member_name]
 
-dt = st.date_input("먹은 날짜")
+checkdt = st.date_input("조회할 날짜")
+checkPress = st.button ("입력 안 한 사람은?")
 
-isPress = st.button("메뉴 저장")
-
-if isPress:
-    if menu_name and member_id and dt:
-        if insert_menu(menu_name, member_id, dt):
-            st.success(f"입력성공")
+query = """
+select 
+    m.name,
+    count(l.id) as lcount
+from
+    member m
+left join lunch_menu 1
+on
+    l.member_id = m.id and l.dt = %s
+group by
+        m.id, m.name
+having 
+        count(l.id) = 0
+order by 
+        count(l.id) desc
+"""
+if checkPress:
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(queryy,(cdt,))
+        rowss = cursor.fetchall()
+         
+        fdf=pd.DataFrame(rows,columns=['name','count'])
+        team_member=fdf['name'].tolist()
+        if len(team_member) >=1:
+            #st.text(",  ".join(teamember))
+            cursor.close()
+            conn.close()
+            st.success(",  ".join(team_member))
         else:
-            st.error(f"입력실패")
-    else:
-        st.warning(f"모든 값을 입력해주세요!")
+            cursor.close()
+            conn.close()
+            st.warning("모든 요원 입력 완료!")
+    except Exception as e:
+        st.warning(f"조회 중 오류가 발생했습니다")
+        print(f"Exception: {e}")
+
+st.subheader("Result check")
+#query = "select menu_name as menu,member_id as ename,dt from lunch_menu order by dt desc"
+query="""SELECT 
+    lunch_menu.menu_name AS menu, 
+    member.name AS ename, 
+    lunch_menu.dt 
+FROM member
+INNER JOIN lunch_menu ON member.id = lunch_menu.member_id
+ORDER BY lunch_menu.dt DESC"""
+
+conn = get_connection()
+cursor = conn.cursor()
+cursor.execute(query)
+rows = cursor.fetchall()
+cursor.close()
+conn.close()
+
+
+# isPress = st.button("메뉴 저장")
+
+# if isPress:
+#     if menu_name and member_id and dt:
+#         if insert_menu(menu_name, member_id, dt):
+#             st.success(f"입력성공")
+#         else:
+#             st.error(f"입력실패")
+#     else:
+#         st.warning(f"모든 값을 입력해주세요!")
 
 
 st.subheader("확인")
@@ -69,9 +126,9 @@ SELECT
 	l.menu_name,
 	m.name,
 	l.dt
-FROM
-	lunch_menu l join member m
-	on l.member_id = m.id
+FROM member
+INNER JOIN lunch_menu l on l.member_id = m.id
+ORDER BY l.dt desc 
 """
 
 conn = get_connection()
@@ -114,14 +171,24 @@ if st.button("한방에 인서트"):
    
     not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
 
+    total_count = len(not_na_df)
+    success_count = 0
+    fail_count = 0
+    fail_messages = []
+
+
     for _, row in not_na_df.iterrows():
         m_id = members[row['ename']] ## 50line에서 가져옴
         insert_menu(row['menu'], m_id, row['dt'])
 
-    for _, row in not_na_df.iterrows():
-        insert_menu(row['menu'], row['ename'], row['dt'])
+        else:
+            fail_count += 1
+            fail_messages.append(f"{row['ename']}의 {row['dt']} 메뉴 {row['menu']} 입력 실패")
 
-    st.success(f"벌크인서트 성공")
-
-
+    if fail_count == 0:
+        st.success(f"총 {total_count}건 벌크인서트 성공")
+    else:
+        st.error(f"총 {total_count}건 중 {fail_count}건 실패")
+        for message in fail_messages:
+            st.error(message)
 
