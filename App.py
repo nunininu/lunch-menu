@@ -126,7 +126,7 @@ SELECT
 	l.menu_name,
 	m.name,
 	l.dt
-FROM member
+FROM member m
 INNER JOIN lunch_menu l on l.member_id = m.id
 ORDER BY l.dt desc 
 """
@@ -164,7 +164,7 @@ except Exception as e:
 # CSV 로드해서 한번에 다 디비에 INSERT 하는거
 st.subheader("벌크 인서트")
 if st.button("한방에 인서트"):
-    df = pd.read_csv('note/menu.csv')
+    df = pd.read_csv('note/lunch_menu.csv')
     start_idx = df.columns.get_loc('2025-01-07')
     melted_df = df.melt(id_vars=['ename'], value_vars=df.columns[start_idx:-2], 
                      var_name='dt', value_name='menu')
@@ -181,9 +181,9 @@ if st.button("한방에 인서트"):
         m_id = members[row['ename']] ## 50line에서 가져옴
         insert_menu(row['menu'], m_id, row['dt'])
 
-        else:
-            fail_count += 1
-            fail_messages.append(f"{row['ename']}의 {row['dt']} 메뉴 {row['menu']} 입력 실패")
+else:
+    fail_count += 1
+    fail_messages.append(f"{row['ename']}의 {row['dt']} 메뉴 {row['menu']} 입력 실패")
 
     if fail_count == 0:
         st.success(f"총 {total_count}건 벌크인서트 성공")
