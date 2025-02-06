@@ -57,6 +57,8 @@ from (
 	select name, id from member order by id
 ) temp;
 
+{"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
+
 --새로운 컬럼 추가
 alter table lunch_menu 
 add column member_id int;
@@ -91,7 +93,22 @@ alter table lunch_menu
 add constraint menu_member_fk 
 	foreign key (member_id)
 	references member(id)
+;
 
+-- SQL Error [42830]: ERROR: there is no unique constraint matching given keys for referenced table "member"
+
+-- 테스트
+select * from member;
+select max(id) from member; -- 10
+
+insert into lunch_menu(menu_name, member_id, dt)
+values('순대국', 1, '2025-01-01');
+
+select * from lunch_menu;
+
+insert into lunch_menu(menu_name, member_id, dt)
+values('순대국', 11, '2025-01-01');
+-- SQL Error [23503]: ERROR: insert or update on table "lunch_menu" violates foreign key constraint "menu_member_fk"
 ```
 
 ## Dev

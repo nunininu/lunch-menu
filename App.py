@@ -111,4 +111,17 @@ if st.button("한방에 인서트"):
     start_idx = df.columns.get_loc('2025-01-07')
     melted_df = df.melt(id_vars=['ename'], value_vars=df.columns[start_idx:-2], 
                      var_name='dt', value_name='menu')
-    
+   
+    not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
+
+    for _, row in not_na_df.iterrows():
+        m_id = members[row['ename']] ## 50line에서 가져옴
+        insert_menu(row['menu'], m_id, row['dt'])
+
+    for _, row in not_na_df.iterrows():
+        insert_menu(row['menu'], row['ename'], row['dt'])
+
+    st.success(f"벌크인서트 성공")
+
+
+
