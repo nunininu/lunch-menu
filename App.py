@@ -64,12 +64,15 @@ if isPress:
 
 
 st.subheader("확인")
-query = """SELECT 
-menu_name AS menu, 
-member_name AS ename, 
-dt 
-FROM lunch_menu 
-ORDER BY dt DESC"""
+query = """
+SELECT
+	l.menu_name,
+	m.name,
+	l.dt
+FROM
+	lunch_menu l join member m
+	on l.member_id = m.id
+"""
 
 conn = get_connection()
 cursor = conn.cursor()
