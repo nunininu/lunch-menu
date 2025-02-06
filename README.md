@@ -28,6 +28,32 @@ CREATE TABLE public.lunch_menu (
 
 alter table lunch_menu
 add constraint unique_member_dt unique (member_name, dt);
+
+create table member(
+id serial NOT NULL,
+name text unique NOT NULL
+);
+
+select * from member;
+
+insert into member(name)
+values 
+('TOM'),
+('cho'),
+('hyun'),
+('JERRY'),
+('SEO'),
+('jiwon'),
+('jacob'),
+('heejin'),
+('lucas'),
+('nuni')
+;
+
+select * from member;
+
+select jsonb_object_agg(name, id)
+from member;
 ```
 
 ## Dev
