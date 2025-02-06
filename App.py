@@ -36,16 +36,16 @@ def insert_menu(menu_name, member_name, dt):
         return False 
 
 
-st.title(f"순신점심기록장!{db_name}")
+st.title(f"점심메뉴집계{db_name}")
 
 st.subheader("입력")
-menu_name = st.text_input("메뉴 이름", placeholder="예: 김치찌게")
+menu_name = st.text_input("메뉴 이름", placeholder="예: 김치개찌")
 member_name = st.selectbox(
     "먹은 사람",
     ("TOM", "KIM", "LEE"),
 )
-dt = st.date_input("얌얌 날짜")
-
+dt = st.date_input(" 날짜")
+먹은
 isPress = st.button("메뉴 저장")
 
 if isPress:
