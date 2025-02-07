@@ -5,6 +5,8 @@ import psycopg
 import os
 from dotenv import load_dotenv
 
+
+
 members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
 
 # https://docs.streamlit.io/develop/concepts/connections/secrets-management
@@ -108,16 +110,16 @@ cursor.close()
 conn.close()
 
 
-# isPress = st.button("메뉴 저장")
+isPress = st.button("메뉴 저장")
 
-# if isPress:
-#     if menu_name and member_id and dt:
-#         if insert_menu(menu_name, member_id, dt):
-#             st.success(f"입력성공")
-#         else:
-#             st.error(f"입력실패")
-#     else:
-#         st.warning(f"모든 값을 입력해주세요!")
+if isPress:
+    if menu_name and member_id and dt:
+        if insert_menu(menu_name, member_id, dt):
+            st.success(f"입력성공")
+        else:
+            st.error(f"입력실패")
+    else:
+        st.warning(f"모든 값을 입력해주세요!")
 
 
 st.subheader("확인")
@@ -179,16 +181,14 @@ if st.button("한방에 인서트"):
 
     for _, row in not_na_df.iterrows():
         m_id = members[row['ename']] ## 50line에서 가져옴
-        insert_menu(row['menu'], m_id, row['dt'])
-
-else:
-    fail_count += 1
-    fail_messages.append(f"{row['ename']}의 {row['dt']} 메뉴 {row['menu']} 입력 실패")
+        r = insert_menu(row['menu'], m_id, row['dt'])
+        if r:
+             success_count =  success_count + 1
+        else:
+             fail_count = fail_count + 1
 
     if fail_count == 0:
         st.success(f"총 {total_count}건 벌크인서트 성공")
     else:
         st.error(f"총 {total_count}건 중 {fail_count}건 실패")
-        for message in fail_messages:
-            st.error(message)
 
